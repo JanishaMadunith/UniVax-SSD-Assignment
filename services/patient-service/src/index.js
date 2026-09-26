@@ -1,0 +1,55 @@
+require('dotenv').config();
+
+const express = require('express');
+const cors = require('cors');
+const path = require('path');
+const { initDB } = require('./db');
+const profileRouter = require('./routes/profile');
+const historyRouter = require('./routes/history');
+const reportsRouter = require('./routes/reports');
+const prescriptionsRouter = require('./routes/prescriptions');
+const adminRouter = require('./routes/admin');
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    service: 'patient-service',
+    timestamp: new Date().toISOString(),
+  });
+});
+
+app.use('/api/patients', profileRouter);
+app.use('/api/patients', historyRouter);
+app.use('/api/patients', reportsRouter);
+app.use('/api/patients', prescriptionsRouter);
+app.use('/api/patients', adminRouter);
+
+app.use((err, req, res, next) => {
+  if (err.code === 'LIMIT_FILE_SIZE') {
+    return res.status(400).json({ error: 'File too large, max 10MB' });
+  }
+
+  return res.status(500).json({ error: err.message });
+});
+
+const PORT = process.env.PORT || 3002;
+
+async function startServer() {
+  try {
+    await initDB();
+    app.listen(PORT, () => {
+      console.log(`Patient service running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error('[PatientService] Failed to initialize database:', error);
+    process.exit(1);
+  }
+}
+
+startServer();

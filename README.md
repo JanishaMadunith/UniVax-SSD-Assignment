@@ -1,47 +1,40 @@
-# Vaccination Tracker - Full-Stack Application
+# Healthcare Telemedicine Platform
+SE3020 Distributed Systems – Assignment 1
 
-## SSD Assignment
-
-This Repository is used for SE4030 – Secure Software Development Assignment in order to find and fix vulnerabilities of the original code.
-
-
-## Overview
-
-Original Repository - https://github.com/JanishaMadunith/UniVax
-
-This project is a full-stack web application initially developed for the SE3040 - Application Frameworks module at SLIIT. It is a healthcare system designed to track vaccination schedules and updates for all age groups. Users can manage profiles, view vaccine catalogs, schedule appointments, log immunization records, and submit feedback/tickets for issues like side effects or complaints.
-
-The backend is built with Express.js (Node.js) and MongoDB, structured into modular components (User Management, Vaccine Catalog & Scheduling, Appointment Management, Immunization Log & Records, Feedback/Ticketing System). It includes RESTful APIs with CRUD operations, third-party API integrations (e.g., CDC for vaccine info, Twilio for notifications), protected routes (JWT/role-based), validation, error handling, and clean architecture.
-
-The frontend is built with React (using hooks/Context API for state management), consuming the backend APIs. UI/UX uses Tailwind CSS for responsive design, with session management via localStorage/JWT.
-
-
-Group Members:
-- IT23401662 -Samarathunga J.M
-- IT23174658 -Gunaweera T.C
-- IT23279698 -J.D Jayatilake 
-- IT23267336 -G.W.D.D.N Kumarasinghe 
-
-
-## Setup Instructions
+## Local Development
 
 ### Prerequisites
-- Node.js (v18+)
-- MongoDB (local or Atlas)
-- Git
+Docker Desktop must be running.
 
-### Step-by-Step Guide
-1. **Install Dependencies**:
-   - Backend: `cd backend && npm install`
+### Start all services
+```bash
+docker compose up --build
+```
 
-2. **Run Locally**:
-   - Start MongoDB (if local: `mongod`).
-   - Backend: `cd backend && npm start` (runs on http://localhost:5001).
+### Access points
+| Service | URL |
+|---------|-----|
+| API Gateway | http://localhost:80 |
+| RabbitMQ UI | http://localhost:15672 (guest/guest) |
+| Frontend | http://localhost:5173 |
 
+## AI Symptom Service
 
-## Initial Contributors
-- Group project for SE3040 - 2026.
-- SE 69 Y03.S02.
+The AI symptom service runs on port `3007` and is available behind gateway route `/api/ai-symptom/*`.
 
-## SSD Assignment Contributors
-- Group project for SE4030 - 2026.
+### Capabilities
+- Chatbot interface with standard and streaming endpoints
+- Voice pipeline (speech-to-text, AI analysis, text-to-speech)
+- Doctor recommendation engine with PostgreSQL ranking
+
+### Main Endpoints
+- `POST /api/ai-symptom/chat/message`
+- `POST /api/ai-symptom/chat/stream` (SSE)
+- `POST /api/ai-symptom/voice/transcribe`
+- `POST /api/ai-symptom/voice/synthesize`
+- `POST /api/ai-symptom/voice/session-token`
+- `POST /api/ai-symptom/voice/conversation`
+- `POST /api/ai-symptom/recommendations/specialty`
+- `POST /api/ai-symptom/recommendations/analyze`
+
+All non-health endpoints require a valid Bearer JWT token.
